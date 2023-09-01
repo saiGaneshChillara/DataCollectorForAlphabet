@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,maximum-scale=0.9,user-scalable=0">
+        <meta charset="utf-8">
+        <title>My data creator</title>
+        <link rel="stylesheet" href="styles.css"> 
+    </head>
+    <body>
+        <div id="content">
+            <h1>My Data Creator</h1>
+            <div>
+                <input id="student" type="text" placeholder="Enter your name">
+                <span id="instructions"></span>
+                <button id="advanaceBtn" onclick="start();">Start</button>
+            </div>
+            <div id="sketchPadContainer"
+            style="visibility: hidden;">
+            </div>
+        </div>
+        <script src="js/SketchPad.js"></script>
+        <script src="js/Draw.js"></script>
+        <script>
+            let index=0;
+            const alphabets="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const data={
+                student: null,
+                session: new Date().getTime(),
+                drawings:{}            
+            };
+            const sketchPad=new SketchPad(document.getElementById("sketchPadContainer"));
+            
+            function start() {
+                if(student.value=="") {
+                    alert("Please enter your name: ");
+                    return;
+                }
+                data.student=student.value;
+                student.style.display="none";
+                sketchPadContainer.style.visibility="visible";
+            
+                const alphabet=alphabets[index];
+                document.getElementById("instructions").innerHTML="Please draw "+alphabet+" alphabet";
+                document.getElementById("advanaceBtn").innerHTML="NEXt";
+                document.getElementById("advanaceBtn").onclick=next;
+            }
+            function next() {
+                if(sketchPad.paths.length==0) {
+                    alert("Please draw the alphabet");
+                    return;
+                }
+                const label=alphabets[index];
+                data.drawings[label]=sketchPad.paths;
+                sketchPad.reset();
+                index++;
+                if(index>=26) {
+                    index=0;
+                    stop();
+                    return;
+                }
+                const alphabet=alphabets[index];
+                document.getElementById("instructions").innerHTML="Please draw "+alphabet+" alphabet";
+            }
+            function stop() {
+                sketchPadContainer.style.visibility="hidden";
+                document.getElementById("instructions").innerHTML="Thanks";
+                
+                const advanceBtn=document.getElementById("advanaceBtn")
+                advanceBtn.innerHTML="Save";
+                advanceBtn.onclick=save;
+            }
+            function save() {
+                const advanceBtn=document.getElementById("advanaceBtn")
+                advanceBtn.style.display="none";
+                instructions.innerHTML="taker your download file and make it an datset";
+
+
+                const element=document.createElement("a");
+                element.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(JSON.stringify(data)));
+
+                const fileName=data.session+".json";
+                element.setAttribute('download',fileName);
+                element.style.display='none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }
+        </script>
+    </body>
+</html>
